@@ -4,7 +4,7 @@
 
 ### eSIM data plans, flight booking and hotel booking inside your own app
 
-[![SDK Version](https://img.shields.io/badge/SDK-1.2.1-blue.svg)](https://central.sonatype.com/search?q=travel.gate2)
+[![SDK Version](https://img.shields.io/badge/SDK-1.2.3-blue.svg)](https://central.sonatype.com/search?q=travel.gate2)
 [![Platform](https://img.shields.io/badge/Platform-Android-green.svg)](https://developer.android.com)
 [![Min SDK](https://img.shields.io/badge/minSdk-24-orange.svg)](https://developer.android.com)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.2.21-purple.svg)](https://kotlinlang.org)
@@ -20,7 +20,7 @@
 
 ---
 
-> **Document version:** 2.0 · **SDK version:** 1.2.1 · **Last updated:** 2026-10-26
+> **Document version:** 2.1 · **SDK version:** 1.2.3 · **Last updated:** 2026-11-18
 > **Breaking changes since the 1.0.x docs:** new Maven coordinates, a shared `core`, Activity-based
 > entry points (`Gate2Esim` / `Gate2Flight` / `Gate2Hotel`) and `resumeAfterPayment()` instead of
 > `notifyPaymentResult()`. See [§15 Migrating from 1.0.x](#15-migrating-from-10x).
@@ -68,6 +68,10 @@ afterwards.
 All products share one `core` artifact (`core-<company>`) that owns initialization, networking,
 theming and logging. It arrives transitively: **never declare `core` yourself.**
 
+**Which products you get depends on your agreement with Gate2.** Gate2 publishes, for your
+`<company>`, only the products you use, for example just `esim-<company>` (plus its `core`) for an
+eSIM-only integration. The sections for products you don't have can be skipped.
+
 ### Integration at a glance
 
 ```
@@ -111,7 +115,7 @@ theming and logging. It arrives transitively: **never declare `core` yourself.**
 |:--|:--|:--|
 | **minSdk** | 24 | The library's declared floor. Gate2 supports Android 8.1 (API 27) and newer. |
 | **eSIM provisioning** | API 28+ | `EuiccManager` does not exist below API 28. Gate the entry point with `Gate2Esim.isDeviceEsimCapable()`. |
-| **compileSdk** | 35 or newer | The SDK is compiled against API 35. |
+| **compileSdk** | 35 or newer | Enforced since 1.2.2: with a lower `compileSdk` the build fails in `check…AarMetadata`. |
 | **Kotlin** | 2.2.21 | |
 | **JVM target** | 11 | |
 | **Jetpack Compose** | Not required | Each product renders inside its own `Activity`. You need Compose in your app only if you embed `Gate2TravelShowcase`. |
@@ -146,18 +150,19 @@ travel.gate2:<module>-<company>[-staging]:<version>
 | `<module>` | `travel-all`, `esim`, `flights`, `hotels` | What you integrate (`core` is transitive) |
 | `<company>` | assigned by Gate2 (one short lowercase word) | Your brand build: colours, welcome screens, fonts and the backend credentials are compiled in |
 | `-staging` | optional suffix | Points at the staging backend (`api.gate2.travel`). Omit it for production (`gw.gate2.travel`). |
-| `<version>` | e.g. `1.2.1` | Plain semver. **Never** pin `1.2.1-<company>` or `1.0.20-test`; that scheme is retired. |
+| `<version>` | e.g. `1.2.3` | Plain semver. **Never** pin `1.2.3-<company>` or `1.0.20-test`; that scheme is retired. |
 
 ```kotlin
 // app/build.gradle.kts
 dependencies {
-    // Everything (eSIM + Flights + Hotels + showcase) over one shared core:
-    implementation("travel.gate2:travel-all-<company>:1.2.1")
+    // One product. Each pulls its matching core automatically:
+    implementation("travel.gate2:esim-<company>:1.2.3")
+    // implementation("travel.gate2:flights-<company>:1.2.3")
+    // implementation("travel.gate2:hotels-<company>:1.2.3")
 
-    // ...or a single product. Each pulls its matching core automatically:
-    // implementation("travel.gate2:esim-<company>:1.2.1")
-    // implementation("travel.gate2:flights-<company>:1.2.1")
-    // implementation("travel.gate2:hotels-<company>:1.2.1")
+    // ...or, if your agreement covers all three, everything (eSIM + Flights + Hotels + showcase)
+    // over one shared core, instead of the lines above:
+    // implementation("travel.gate2:travel-all-<company>:1.2.3")
 }
 ```
 
@@ -174,8 +179,11 @@ dependencyResolutionManagement {
 > **Exactly one `<company>` per app.** Two brand artifacts on the classpath produce
 > `Duplicate class com.gate2.sdk...` at build time.
 >
-> **Staging builds** carry the same version number as production. Check the version exists on
-> Maven Central before pinning it, and ask Gate2 if it is missing.
+> **Not every version exists for every company.** Gate2 releases each `<company>` build on its own
+> schedule and only for the products in your agreement. Before pinning a version, check that
+> `https://repo1.maven.org/maven2/travel/gate2/<module>-<company>/<version>/` exists (and the
+> `-staging` one for QA), and ask Gate2 if it is missing. Staging builds carry the same version
+> number as production.
 
 ### ProGuard / R8
 
@@ -230,7 +238,7 @@ class MyApplication : Application() {
   surfaces later as an `UNAUTHORIZED` (HTTP 401) failure in the product callbacks. Handle it there,
   not with a `try/catch` around `initialize()`.
 - `Gate2TravelSdk.getInstance().getVersion()` returns the running SDK version (staging builds report
-  `1.2.1-test`). Include it in support requests.
+  `1.2.3-test`). Include it in support requests.
 
 ---
 
@@ -374,8 +382,13 @@ Welcome (T&C, first launch only) → Search destination → Plans → Order → 
                                                                                          ↘ My eSIMs → Detail → Top-up
 ```
 
-The search screen can show a merchant banner configured by Gate2 for your brand; it is hidden
-silently when none is configured.
+The plan list has a filters sheet: plan type (total data or daily data), region, country, data
+volume and duration, with a live count of matching plans on the "Show plans" button.
+
+The search screen also shows your FAQ and, when one is configured, a promotional banner. The FAQ,
+the banner, plan discounts and the plan catalogue are all set up per merchant on the Gate2 backend
+and follow the access token, so a staging token can show different content from production. The
+banner is hidden silently when none is configured.
 
 ---
 
@@ -629,9 +642,10 @@ destination, give it `onBack` so the system back button lands where you launched
 
 ## 11. Theming and branding
 
-Your brand artifact already carries your look: accent colour, welcome screens, assets and (where
-supplied) your typeface are compiled into `<module>-<company>`. In the normal case there is nothing
-to configure.
+Your brand artifact already carries your look: accent colour, a colour palette for light and dark
+mode, welcome screens, assets and (where supplied) your typeface are compiled into
+`<module>-<company>`. The screens follow the device's light/dark setting. In the normal case there
+is nothing to configure.
 
 ### Per-launch overrides
 
@@ -722,7 +736,7 @@ Headers on every request:
 X-API-Key: <your token>
 X-Session-Id: <sessionId you passed>
 X-User-Id: <userId you passed, if any>
-X-SDK-Version: 1.2.1
+X-SDK-Version: 1.2.3
 X-Platform: Android
 Accept-Language: <language you passed>
 ```
@@ -742,6 +756,9 @@ Accept-Language: <language you passed>
 | App exits after a product flow | Host called `finish()` in `onComplete` / `onCancel` | Remove it ([§10](#10-back-navigation)) |
 | eSIM entry shown but always errors | Device is not eSIM-capable | Gate on `isDeviceEsimCapable()` ([§5](#5-esim)) |
 | `Duplicate class com.gate2.sdk...` at build time | Two brand artifacts on the classpath | Depend on exactly one `<module>-<company>` |
+| `check…AarMetadata` fails: "requires … to compile against version 35 or later" | `compileSdk` below 35 | Set `compileSdk = 35` or newer |
+| `Could not find travel.gate2:<module>-<company>:<version>` | That version (or that product) is not published for your company | Check Maven Central and ask Gate2 ([§3](#3-installation)) |
+| Staging shows no FAQ, banner or discounts | Content is configured per merchant and follows the token | Ask Gate2 to configure the merchant behind your staging token |
 | `EsimCallbacks` overload ambiguity at compile time | Un-annotated `onFail` lambda | Write `{ error: EsimError -> ... }` |
 
 To capture SDK internals during integration set `.logLevel(SdkLogLevel.ALL)` and supply `.onLog`.
@@ -755,7 +772,7 @@ The 1.0.x line (`travel.gate2:esim:1.0.x`, `travel.gate2:core:1.0.0`, and the pr
 
 | Then | Now |
 |:--|:--|
-| `travel.gate2:esim:1.0.x` | `travel.gate2:esim-<company>:1.2.1` (or `travel-all-<company>`) |
+| `travel.gate2:esim:1.0.x` | `travel.gate2:esim-<company>:1.2.3` (or `travel-all-<company>`) |
 | A separate `core` dependency | Transitive. Remove it. |
 | Version suffixes `1.0.20-test`, `1.1.4-<company>` | `-staging` suffix on the **artifact ID**; plain semver version |
 | `Gate2EsimSdk` / `Gate2HotelSdk` | One `Gate2TravelSdk.initialize()` for every product |
@@ -787,6 +804,8 @@ The Maven group is `travel.gate2`; the Kotlin packages are `com.gate2.sdk.*`. Th
 
 | Version | Date | Highlights |
 |:--|:--|:--|
+| **1.2.3** | Nov 2026 | eSIM: promotional banner supports the new top slot and per-language images and keeps the image's own proportions; FAQ answers without a question title are shown directly instead of collapsed; numbered lists in FAQ answers. Brand builds can carry their own light and dark colour palette. No API changes. |
+| **1.2.2** | Nov 2026 | eSIM: redesigned plan filters (plan type, region, country, data volume, duration) with a live result count. Built with Android Gradle Plugin 9; Kotlin stays 2.2.21. The AARs now require `compileSdk` 35 or newer. No API changes. |
 | **1.2.1** | Oct 2026 | Flights: seats overview on the review screen, "Select seats" entry from the passenger form, scroll edge fades on flight screens. |
 | **1.2.0** | Oct 2026 | Flights: seat map after pricing (display-only selection), saved-traveler edit, recent-search removal (flights v2 endpoints). |
 | **1.1.6** | Sep 2026 | eSIM: merchant banner on the search screen. |

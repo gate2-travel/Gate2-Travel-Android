@@ -1,12 +1,12 @@
 # Gate2 eSIM SDK — Android Integration Guide
 
-> **Artifact:** `travel.gate2:esim-<company>:1.2.1`
+> **Artifact:** `travel.gate2:esim-<company>:1.2.3`
 > **Scope:** eSIM only. Flights and Hotels are separate artifacts and are not covered here.
-> **Last updated:** 2026-10-26
+> **Last updated:** 2026-11-18
 
 This guide covers everything needed to ship the Gate2 eSIM flow inside your Android app.
-Your brand build is a distinct artifact — brand colours, the welcome screen and the backend
-endpoint are compiled in, so there is no brand configuration to do at runtime. Throughout this
+Your brand build is a distinct artifact — brand colours (for light and dark mode), the welcome
+screen and the backend endpoint are compiled in, so there is no brand configuration to do at runtime. Throughout this
 guide `<company>` stands for the brand identifier Gate2 assigned to you.
 
 ---
@@ -17,7 +17,7 @@ guide `<company>` stands for the brand identifier Gate2 assigned to you.
 |---|---|
 | **minSdk** | 24 (the library's floor) |
 | **eSIM functionality** | **API 28+.** Android's `EuiccManager` does not exist below API 28, so eSIM cannot work on API 24–27. Gate the entry point — see [§9](#9-hiding-the-feature-on-unsupported-devices). |
-| **compileSdk** | 35 |
+| **compileSdk** | 35 or newer. Enforced since 1.2.2: a lower value fails the build in `check…AarMetadata`. |
 | **Java / Kotlin** | JVM target 11 |
 | **UI toolkit** | None required. The SDK renders its own Compose UI inside its own Activity; your app does not need Compose. |
 | **Access token** | A Gate2-issued API key, supplied by Gate2. It is sent as the `X-API-Key` header; module entitlement is enforced server-side and is not parsed on the client. |
@@ -27,7 +27,7 @@ guide `<company>` stands for the brand identifier Gate2 assigned to you.
 ```kotlin
 // app/build.gradle.kts
 dependencies {
-    implementation("travel.gate2:esim-<company>:1.2.1")
+    implementation("travel.gate2:esim-<company>:1.2.3")
 }
 ```
 
@@ -35,12 +35,13 @@ That is the only line required — the shared `travel.gate2:core-<company>` arti
 transitively. **Do not declare `core` yourself**; pinning it separately can desynchronise the two.
 
 This artifact targets the **production** backend (`gw.gate2.travel`). A staging build that points at
-`api.gate2.travel` is published as `travel.gate2:esim-<company>-staging:1.2.1` — always the same version
-as the production artifact. Check that the version you pin exists on Maven Central
-(`https://repo1.maven.org/maven2/travel/gate2/esim-<company>-staging/`) before your QA cycle; if it is
-missing, request it from Gate2.
+`api.gate2.travel` is published as `travel.gate2:esim-<company>-staging:1.2.3` — always the same version
+as the production artifact. Gate2 releases each company's build on its own schedule, so not every
+version exists for every `<company>`. Check that the version you pin exists on Maven Central
+(`https://repo1.maven.org/maven2/travel/gate2/esim-<company>/` and `.../esim-<company>-staging/`)
+before your QA cycle; if it is missing, request it from Gate2.
 
-> **Never pin a version with a brand or environment suffix** (`1.2.1-<company>`, `1.0.20-test`). That
+> **Never pin a version with a brand or environment suffix** (`1.2.3-<company>`, `1.0.20-test`). That
 > scheme is retired. Brand and environment are part of the artifact ID; the version is plain semver.
 
 ### What the SDK adds to your manifest
@@ -390,8 +391,9 @@ be shown an error after tapping.
 
 ## 10. Branding and theming
 
-**Your brand build already carries your branding.** The accent colour, the welcome screen and
-brand assets are compiled into `esim-<company>`. In the normal case you do not pass a theme at all.
+**Your brand build already carries your branding.** The accent colour, a colour palette for light
+and dark mode, the welcome screen and brand assets are compiled into `esim-<company>`. The screens
+follow the device's light/dark setting. In the normal case you do not pass a theme at all.
 
 Per-launch overrides, if you need them:
 
@@ -431,6 +433,9 @@ rules for `com.gate2.sdk.**` — they would only reduce your own obfuscation cov
 | App exits after the eSIM flow | Host called `finish()` in `onComplete`/`onCancel` | Remove it — back already returns to your app |
 | eSIM entry point shown but always errors | Device is not eSIM-capable | Gate on `isDeviceEsimCapable()` (§9) |
 | `Duplicate class com.gate2.sdk.…` at build time | Two brand artifacts on the classpath | Depend on exactly one `esim-<company>` |
+| `check…AarMetadata` fails: "requires … to compile against version 35 or later" | `compileSdk` below 35 | Set `compileSdk = 35` or newer |
+| `Could not find travel.gate2:esim-<company>:<version>` | That version is not published for your company | Check Maven Central (§2) and ask Gate2 |
+| Staging shows no FAQ, banner or discounts | The catalogue, FAQ, banner and discounts are configured per merchant and follow the access token | Ask Gate2 to configure the merchant behind your staging token |
 
 To capture SDK internals during integration, set `.logLevel(SdkLogLevel.ALL)` and supply
 `.onLog { entry -> Log.d("Gate2", "${entry.level}: ${entry.message}") }`. Turn this back down for
@@ -438,7 +443,7 @@ release builds.
 
 ## 13. Pre-release checklist
 
-- [ ] `travel.gate2:esim-<company>:1.2.1` is the only Gate2 dependency; `core` is not declared separately
+- [ ] `travel.gate2:esim-<company>:1.2.3` (or the version Gate2 gave you) is the only Gate2 dependency; `core` is not declared separately
 - [ ] Access token injected from a secret store, not committed
 - [ ] `logLevel` is `NONE` in release builds
 - [ ] `initialize()` guarded by `isInitialized()`
@@ -447,6 +452,7 @@ release builds.
 - [ ] Both `orderId` **and** `sessionId` persisted durably in `onProcessPayment`
 - [ ] `resumeAfterPayment()` called on payment success; state cleared on failure
 - [ ] Nothing calls `finish()` inside `onComplete` / `onCancel`
+- [ ] `compileSdk` is 35 or newer
 - [ ] Tested on a real API 28+ eSIM-capable handset — emulators have no eUICC
 - [ ] Tested payment resume after the app is killed mid-payment
 - [ ] The five merged permissions have cleared security review
