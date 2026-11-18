@@ -821,7 +821,6 @@ The Maven group is `travel.gate2`; the Kotlin packages are `com.gate2.sdk.*`. Th
 | Resource | |
 |:--|:--|
 | **Email** | [support@gate2.travel](mailto:support@gate2.travel) |
-| **Backend API reference** | [Postman collection](https://documenter.getpostman.com/view/7713462/2sB3dWq6UM) |
 | **This documentation** | [github.com/gate2-travel/demo-android](https://github.com/gate2-travel/demo-android) |
 | **eSIM integration guide** | [ESIM_INTEGRATION_GUIDE.md](./ESIM_INTEGRATION_GUIDE.md) |
 
