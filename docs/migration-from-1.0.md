@@ -7,7 +7,7 @@ The 1.0.x line (`travel.gate2:esim:1.0.x`, `travel.gate2:core:1.0.0`, and the pr
 
 | Then | Now |
 |:--|:--|
-| `travel.gate2:esim:1.0.x` | `travel.gate2:esim-<company>:1.2.3` (or `travel-all-<company>`) |
+| `travel.gate2:esim:1.0.x` | `travel.gate2:esim-<company>:1.2.4` (or `travel-all-<company>`) |
 | A separate `core` dependency | Transitive. Remove it. |
 | Version suffixes `1.0.20-test`, `1.1.4-<company>` | `-staging` suffix on the **artifact ID**; plain semver version |
 | `Gate2EsimSdk` / `Gate2HotelSdk` | One `Gate2TravelSdk.initialize()` for every product |

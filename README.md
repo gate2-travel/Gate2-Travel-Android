@@ -4,7 +4,7 @@
 
 ### eSIM data plans, flight booking and hotel booking inside your own app
 
-[![SDK Version](https://img.shields.io/badge/SDK-1.2.3-blue.svg)](https://central.sonatype.com/search?q=travel.gate2)
+[![SDK Version](https://img.shields.io/badge/SDK-1.2.4-blue.svg)](https://central.sonatype.com/search?q=travel.gate2)
 [![Platform](https://img.shields.io/badge/Platform-Android-green.svg)](https://developer.android.com)
 [![Min SDK](https://img.shields.io/badge/minSdk-24-orange.svg)](https://developer.android.com)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.2.21-purple.svg)](https://kotlinlang.org)
@@ -42,7 +42,7 @@ eSIM-only integration that is `esim-<company>`.
 ```kotlin
 // app/build.gradle.kts
 dependencies {
-    implementation("travel.gate2:esim-<company>:1.2.3")   // -staging suffix for the staging backend
+    implementation("travel.gate2:esim-<company>:1.2.4")   // -staging suffix for the staging backend
 }
 ```
 

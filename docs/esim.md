@@ -5,7 +5,7 @@
 Everything needed to ship the Gate2 eSIM flow inside your Android app: destination search, plan
 filters, order, payment hand-off, eSIM installation, "My eSIMs" and top-ups.
 
-> **Artifact:** `travel.gate2:esim-<company>:1.2.3` (staging: `esim-<company>-staging`).
+> **Artifact:** `travel.gate2:esim-<company>:1.2.4` (staging: `esim-<company>-staging`).
 > Install and initialize the SDK first: [Getting started](getting-started.md).
 
 - [Launch the flow](#launch-the-flow)
@@ -290,6 +290,9 @@ Welcome (T&C, first launch only) → Search destination → Plans → Order → 
 - **Plan filters.** The plan list has a filters sheet: plan type (total data or daily data),
   region, country, data volume and duration, with a live count of matching plans on the
   "Show plans" button.
+- **After purchase.** The confirmation screen shows the activation code, SM-DP+ address and
+  installation steps, followed by a short checklist: remove old eSIM profiles, make sure the eSIM
+  line is turned on, and enable data roaming for it.
 - **FAQ and banner.** The search screen shows your FAQ and, when one is configured, a promotional
   banner. The banner is hidden silently when none is configured.
 - **Merchant content.** The plan catalogue, discounts, FAQ and banner are set up per merchant on

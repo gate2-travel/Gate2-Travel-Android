@@ -6,6 +6,7 @@ All notable changes to the Gate2 Travel SDK for Android. Versions are published 
 
 | Version | Date | Highlights |
 |:--|:--|:--|
+| **1.2.4** | Nov 2026 | eSIM: the confirmation screen shows a "Check this after receiving your eSIM" box below the installation steps (remove old eSIM profiles, make sure the eSIM line is active, turn on data roaming), in English, Azerbaijani and Russian. No API changes. |
 | **1.2.3** | Nov 2026 | eSIM: promotional banner supports the new top slot and per-language images and keeps the image's own proportions; FAQ answers without a question title are shown directly instead of collapsed; numbered lists in FAQ answers. Brand builds can carry their own light and dark colour palette. No API changes. |
 | **1.2.2** | Nov 2026 | eSIM: redesigned plan filters (plan type, region, country, data volume, duration) with a live result count. Built with Android Gradle Plugin 9; Kotlin stays 2.2.21. The AARs now require `compileSdk` 35 or newer. No API changes. |
 | **1.2.1** | Oct 2026 | Flights: seats overview on the review screen, "Select seats" entry from the passenger form, scroll edge fades on flight screens. |

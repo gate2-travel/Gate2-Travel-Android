@@ -6,7 +6,7 @@
 screen that presents the products and lets the host launch each one with its own callbacks. It
 wraps itself in the SDK theme; your app only needs Compose to place it.
 
-> **Artifact:** `travel.gate2:travel-all-<company>:1.2.3`, if your agreement covers all three
+> **Artifact:** `travel.gate2:travel-all-<company>:1.2.4`, if your agreement covers all three
 > products. Install and initialize the SDK first: [Getting started](getting-started.md).
 
 ---

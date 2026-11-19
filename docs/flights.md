@@ -5,7 +5,7 @@
 Flight search, results, fare details, travelers, seat map, review, payment hand-off and
 confirmation, plus "My flights", saved travelers and FAQ.
 
-> **Artifact:** `travel.gate2:flights-<company>:1.2.3` (or `travel-all-<company>`), if Flights is in
+> **Artifact:** `travel.gate2:flights-<company>:1.2.4` (or `travel-all-<company>`), if Flights is in
 > your agreement. Install and initialize the SDK first: [Getting started](getting-started.md).
 
 - [Launch](#launch)

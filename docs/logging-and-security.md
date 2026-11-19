@@ -43,7 +43,7 @@ Headers on every request:
 X-API-Key: <your token>
 X-Session-Id: <sessionId you passed>
 X-User-Id: <userId you passed, if any>
-X-SDK-Version: 1.2.3
+X-SDK-Version: 1.2.4
 X-Platform: Android
 Accept-Language: <language you passed>
 ```

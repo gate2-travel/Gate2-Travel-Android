@@ -4,7 +4,7 @@
 
 Hotel search, results, hotel detail, room pre-booking, guest details and confirmation.
 
-> **Artifact:** `travel.gate2:hotels-<company>:1.2.3` (or `travel-all-<company>`), if Hotels is in
+> **Artifact:** `travel.gate2:hotels-<company>:1.2.4` (or `travel-all-<company>`), if Hotels is in
 > your agreement. Install and initialize the SDK first: [Getting started](getting-started.md).
 
 ---

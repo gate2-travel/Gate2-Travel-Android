@@ -56,19 +56,19 @@ travel.gate2:<module>-<company>[-staging]:<version>
 | `<module>` | `esim`, `flights`, `hotels`, `travel-all` | What you integrate (`core` is transitive) |
 | `<company>` | assigned by Gate2 (one short lowercase word) | Your brand build: colours, welcome screens, fonts and the backend endpoint are compiled in |
 | `-staging` | optional suffix | Points at the staging backend (`api.gate2.travel`). Omit it for production (`gw.gate2.travel`). |
-| `<version>` | e.g. `1.2.3` | Plain semver. **Never** pin `1.2.3-<company>` or `1.0.20-test`; that scheme is retired. |
+| `<version>` | e.g. `1.2.4` | Plain semver. **Never** pin `1.2.4-<company>` or `1.0.20-test`; that scheme is retired. |
 
 ```kotlin
 // app/build.gradle.kts
 dependencies {
     // One product. Each pulls its matching core automatically:
-    implementation("travel.gate2:esim-<company>:1.2.3")
-    // implementation("travel.gate2:flights-<company>:1.2.3")
-    // implementation("travel.gate2:hotels-<company>:1.2.3")
+    implementation("travel.gate2:esim-<company>:1.2.4")
+    // implementation("travel.gate2:flights-<company>:1.2.4")
+    // implementation("travel.gate2:hotels-<company>:1.2.4")
 
     // ...or, if your agreement covers all three, everything (eSIM + Flights + Hotels + showcase)
     // over one shared core, instead of the lines above:
-    // implementation("travel.gate2:travel-all-<company>:1.2.3")
+    // implementation("travel.gate2:travel-all-<company>:1.2.4")
 }
 ```
 
@@ -155,7 +155,7 @@ your CI secret store.
   surfaces later as an `UNAUTHORIZED` (HTTP 401) failure in the product callbacks. Handle it there,
   not with a `try/catch` around `initialize()`.
 - `Gate2TravelSdk.getInstance().getVersion()` returns the running SDK version (staging builds report
-  `1.2.3-test`). Include it in support requests.
+  `1.2.4-test`). Include it in support requests.
 
 ---
 
